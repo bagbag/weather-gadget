@@ -1,0 +1,313 @@
+{
+  "devices": [
+    {
+      "_id": "XX:XX:XX:XX:XX:XX",
+      "cipher_id": "XXXX",
+      "last_status_store": 1521659005,
+      "modules": [
+        {
+          "_id": "XX:XX:XX:XX:XX:XX",
+          "type": "NAModule1",
+          "last_message": 1521659003,
+          "last_seen": 1521658977,
+          "dashboard_data": {
+            "time_utc": 1521658977,
+            "Temperature": -4.2,
+            "temp_trend": "down",
+            "Humidity": 73,
+            "date_max_temp": 1521641290,
+            "date_min_temp": 1521610066,
+            "min_temp": -6.4,
+            "max_temp": 3.1
+          },
+          "data_type": [
+            "Temperature",
+            "Humidity"
+          ],
+          "module_name": "Außen",
+          "last_setup": 1492857606,
+          "battery_vp": 5458,
+          "battery_percent": 77,
+          "rf_status": 81,
+          "firmware": 46
+        },
+        {
+          "_id": "XX:XX:XX:XX:XX:XX",
+          "type": "NAModule3",
+          "last_message": 1521659003,
+          "last_seen": 1521658997,
+          "dashboard_data": {
+            "time_utc": 1521658984,
+            "Rain": 0,
+            "sum_rain_24": 0.70729751403368,
+            "sum_rain_1": 0
+          },
+          "data_type": [
+            "Rain"
+          ],
+          "module_name": "Regenmesser",
+          "last_setup": 1493050404,
+          "battery_vp": 5392,
+          "battery_percent": 75,
+          "rf_status": 71,
+          "firmware": 8
+        },
+        {
+          "_id": "XX:XX:XX:XX:XX:XX",
+          "type": "NAModule4",
+          "last_message": 1521659003,
+          "last_seen": 1521658971,
+          "dashboard_data": {
+            "time_utc": 1521658971,
+            "Temperature": 23,
+            "temp_trend": "stable",
+            "Humidity": 27,
+            "CO2": 489,
+            "date_max_temp": 1521643418,
+            "date_min_temp": 1521606709,
+            "min_temp": 19.5,
+            "max_temp": 24.4
+          },
+          "data_type": [
+            "Temperature",
+            "CO2",
+            "Humidity"
+          ],
+          "module_name": "2. Innenmesser",
+          "last_setup": 1493050856,
+          "battery_vp": 4990,
+          "battery_percent": 44,
+          "rf_status": 86,
+          "firmware": 44
+        },
+        {
+          "_id": "XX:XX:XX:XX:XX:XX",
+          "type": "NAModule2",
+          "last_message": 1521659003,
+          "last_seen": 1521659003,
+          "dashboard_data": {
+            "WindAngle": 270,
+            "WindStrength": 1,
+            "GustAngle": 270,
+            "GustStrength": 4,
+            "time_utc": 1521658990,
+            "WindHistoric": [
+              {
+                "WindStrength": 1,
+                "WindAngle": 315,
+                "time_utc": 1521655581
+              },
+              {
+                "WindStrength": 0,
+                "WindAngle": -1,
+                "time_utc": 1521655882
+              },
+              {
+                "WindStrength": 2,
+                "WindAngle": 238,
+                "time_utc": 1521656190
+              },
+              {
+                "WindStrength": 2,
+                "WindAngle": 242,
+                "time_utc": 1521656491
+              },
+              {
+                "WindStrength": 1,
+                "WindAngle": 270,
+                "time_utc": 1521656561
+              },
+              {
+                "WindStrength": 1,
+                "WindAngle": 270,
+                "time_utc": 1521656864
+              },
+              {
+                "WindStrength": 1,
+                "WindAngle": 270,
+                "time_utc": 1521657171
+              },
+              {
+                "WindStrength": 4,
+                "WindAngle": 240,
+                "time_utc": 1521657472
+              },
+              {
+                "WindStrength": 2,
+                "WindAngle": 244,
+                "time_utc": 1521657780
+              },
+              {
+                "WindStrength": 1,
+                "WindAngle": 270,
+                "time_utc": 1521658080
+              },
+              {
+                "WindStrength": 1,
+                "WindAngle": 235,
+                "time_utc": 1521658388
+              },
+              {
+                "WindStrength": 2,
+                "WindAngle": 234,
+                "time_utc": 1521658689
+              },
+              {
+                "WindStrength": 1,
+                "WindAngle": 270,
+                "time_utc": 1521658990
+              }
+            ],
+            "date_max_wind_str": 1521630363,
+            "date_max_temp": 1521586990,
+            "date_min_temp": 1521623186,
+            "min_temp": -0.7,
+            "max_temp": 0,
+            "max_wind_angle": 22,
+            "max_wind_str": 34
+          },
+          "data_type": [
+            "Wind"
+          ],
+          "module_name": "Windmesser",
+          "last_setup": 1520603099,
+          "battery_vp": 6073,
+          "battery_percent": 100,
+          "rf_status": 73,
+          "firmware": 18
+        }
+      ],
+      "place": {
+        "altitude": 897,
+        "city": "Schonach im Schwarzwald",
+        "country": "DE",
+        "timezone": "Europe/Berlin",
+        "location": [
+          1.23456,
+          1.23456
+        ]
+      },
+      "station_name": "Turntal",
+      "type": "NAMain",
+      "dashboard_data": {
+        "AbsolutePressure": 923.4,
+        "time_utc": 1521658996,
+        "Noise": 41,
+        "Temperature": 22.8,
+        "temp_trend": "stable",
+        "Humidity": 27,
+        "Pressure": 1028.1,
+        "pressure_trend": "stable",
+        "CO2": 1072,
+        "date_max_temp": 1521654977,
+        "date_min_temp": 1521624408,
+        "min_temp": 18.5,
+        "max_temp": 22.8
+      },
+      "data_type": [
+        "Temperature",
+        "CO2",
+        "Humidity",
+        "Noise",
+        "Pressure"
+      ],
+      "co2_calibrating": false,
+      "date_setup": 1492857582,
+      "last_setup": 1492857582,
+      "module_name": "Indoor",
+      "firmware": 134,
+      "last_upgrade": 1492857582,
+      "wifi_status": 74,
+      "friend_users": [
+        "abcdefgh123456789"
+      ]
+    },
+    {
+      "_id": "XX:XX:XX:XX:XX:XX",
+      "cipher_id": "XXXX",
+      "last_status_store": 1521659257,
+      "modules": [
+        {
+          "_id": "XX:XX:XX:XX:XX:XX",
+          "type": "NAModule1",
+          "last_message": 1521659251,
+          "last_seen": 1521659225,
+          "dashboard_data": {
+            "time_utc": 1521659225,
+            "Temperature": 2,
+            "temp_trend": "down",
+            "Humidity": 56,
+            "date_max_temp": 1521643435,
+            "date_min_temp": 1521604644,
+            "min_temp": -5.3,
+            "max_temp": 14.5
+          },
+          "data_type": [
+            "Temperature",
+            "Humidity"
+          ],
+          "module_name": "Außen Modul",
+          "last_setup": 1482062668,
+          "battery_vp": 4484,
+          "battery_percent": 37,
+          "rf_status": 61,
+          "firmware": 44
+        }
+      ],
+      "place": {
+        "altitude": 128,
+        "city": "Leipzig",
+        "country": "DE",
+        "timezone": "Europe/Berlin",
+        "location": [
+          1.23456,
+          1.23456
+        ]
+      },
+      "station_name": "Leipzig",
+      "type": "NAMain",
+      "read_only": true,
+      "dashboard_data": {
+        "AbsolutePressure": 1007.6,
+        "time_utc": 1521659248,
+        "Noise": 35,
+        "Temperature": 19.7,
+        "temp_trend": "up",
+        "Humidity": 39,
+        "Pressure": 1023,
+        "pressure_trend": "down",
+        "CO2": 987,
+        "date_max_temp": 1521650174,
+        "date_min_temp": 1521609299,
+        "min_temp": 8.7,
+        "max_temp": 21.3
+      },
+      "data_type": [
+        "Temperature",
+        "CO2",
+        "Humidity",
+        "Noise",
+        "Pressure"
+      ],
+      "co2_calibrating": false,
+      "date_setup": 1482062693,
+      "last_setup": 1482062693,
+      "module_name": "Indoor",
+      "firmware": 132,
+      "last_upgrade": 1482062675,
+      "wifi_status": 43
+    }
+  ],
+  "user": {
+    "mail": "abc@domain.tld",
+    "administrative": {
+      "country": "DE",
+      "feel_like_algo": 0,
+      "lang": "de-DE",
+      "pressureunit": 0,
+      "reg_locale": "de",
+      "unit": 0,
+      "windunit": 0
+    }
+  }
+}
