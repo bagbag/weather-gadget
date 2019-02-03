@@ -1,4 +1,17 @@
-export const CLIENT_ID = '';
-export const CLIENT_SECRET = '';
-export const USERNAME = '';
-export const PASSWORD = '';
+import { InjectionToken } from '@angular/core';
+
+export type Config = {
+  clientId: string;
+  clientSecret: string;
+  username: string;
+  password: string;
+};
+
+export const ConfigToken = new InjectionToken<Config>('config');
+
+export const config = {
+  clientId: '',
+  clientSecret: '',
+  username: '',
+  password: ''
+};

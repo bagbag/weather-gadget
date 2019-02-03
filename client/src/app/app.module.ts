@@ -6,6 +6,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { config, ConfigToken } from './config';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,9 @@ import { AppComponent } from './app.component';
     BrowserAnimationsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    { provide: ConfigToken, useValue: config }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

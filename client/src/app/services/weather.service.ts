@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Config, ConfigToken } from '../config';
 import { WeatherData } from '../model';
 import { NetatmoWeatherStationData, NetatmoWeatherStationDataResponse, parseStationData } from '../netatmo';
 
@@ -11,6 +12,13 @@ type AuthResponse = {
 
 const NETATMO_AUTH_URL = 'https://api.netatmo.com/oauth2/token';
 const NETATMO_WEATHER_STATION_DATA_URL = 'https://api.netatmo.com/api/getstationsdata';
+
+const LoginRequestOptions = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Authorization': 'my-auth-token'
+  })
+};
 
 @Injectable({
   providedIn: 'root'
@@ -24,20 +32,22 @@ export class WeatherService {
   private refreshToken: string;
   private scope: string[];
 
-  constructor(httpClient: HttpClient) {
+  constructor(httpClient: HttpClient, @Inject(ConfigToken) config: Config) {
     this.httpClient = httpClient;
+    this.clientId = config.clientId;
+    this.clientSecret = config.clientSecret;
   }
 
   async login(username: string, password: string): Promise<void> {
-    const params = this.getLoginParams(username, password);
-    const response = await this.httpClient.post<AuthResponse>(NETATMO_AUTH_URL, params).toPromise();
+    const params = this.getLoginParams(username, password).toString();
+    const response = await this.httpClient.post<AuthResponse>(NETATMO_AUTH_URL, params, LoginRequestOptions).toPromise();
 
     this.accessToken = response.access_token;
     this.refreshToken = response.refresh_token;
     this.scope = response.scope;
   }
 
-  private async getWeatherData(): Promise<WeatherData[]> {
+  async getWeatherData(): Promise<WeatherData[]> {
     const now = Math.floor(Date.now() / 1000);
 
     const stationData = await this.getWeatherStationData();
@@ -55,14 +65,13 @@ export class WeatherService {
     return response.body;
   }
 
-  private getLoginParams(username: string, password: string) {
-    const params = {
-      grant_type: 'password',
-      username,
-      password,
-      client_id: this.clientId,
-      client_secret: this.clientSecret
-    };
+  private getLoginParams(username: string, password: string): URLSearchParams {
+    const params = new URLSearchParams();
+    params.set('grant_type', 'password');
+    params.set('username', username);
+    params.set('password', password);
+    params.set('client_id', this.clientId);
+    params.set('client_secret', this.clientSecret);
 
     return params;
   }
