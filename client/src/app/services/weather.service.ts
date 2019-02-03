@@ -60,8 +60,6 @@ export class WeatherService {
     const params = this.getWeatherStationDataParams();
     const response = await this.httpClient.post<NetatmoWeatherStationDataResponse>(NETATMO_WEATHER_STATION_DATA_URL, params).toPromise();
 
-    console.log(JSON.stringify(response.body, undefined, 2));
-
     return response.body;
   }
 
