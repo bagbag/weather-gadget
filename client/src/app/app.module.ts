@@ -1,6 +1,7 @@
 import { PortalModule } from '@angular/cdk/portal';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule, MatFormFieldModule, MatInputModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -9,7 +10,6 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SettingsComponent } from './components/settings/settings.component';
-import { config, ConfigToken } from './config';
 
 @NgModule({
   declarations: [
@@ -23,13 +23,12 @@ import { config, ConfigToken } from './config';
     BrowserAnimationsModule,
     HttpClientModule,
     PortalModule,
+    FormsModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule
   ],
-  providers: [
-    { provide: ConfigToken, useValue: config }
-  ],
+  providers: [],
   bootstrap: [AppComponent],
   entryComponents: [SettingsComponent]
 })

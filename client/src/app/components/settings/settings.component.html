@@ -1,19 +1,19 @@
-<form class="example-form">
+<div class="form-container">
   <mat-form-field>
-    <input matInput placeholder="API Key">
+    <input matInput placeholder="Client id" [(ngModel)]="clientId">
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="API secret">
+    <input matInput placeholder="Client secret" [(ngModel)]="clientSecret">
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="Username">
+    <input matInput placeholder="Username" [(ngModel)]="username">
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="Password">
+    <input matInput placeholder="Password" [(ngModel)]="password">
   </mat-form-field>
-</form>
 
-<button mat-button>Save</button>
+  <button mat-button (click)="save()">Save</button>
+</div>

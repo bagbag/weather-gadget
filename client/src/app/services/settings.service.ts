@@ -1,72 +1,104 @@
-import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
-import { ApplicationRef, ComponentFactoryResolver, Injectable, Injector } from '@angular/core';
-import { SettingsComponent } from '../components/settings/settings.component';
+import { Injectable } from '@angular/core';
+import { Observable, Subject, BehaviorSubject, ReplaySubject } from 'rxjs';
+
+export type Settings = {
+  username: string | undefined;
+  password: string | undefined;
+  clientId: string | undefined;
+  clientSecret: string | undefined;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class SettingsService {
-  private readonly componentFactoryResolver: ComponentFactoryResolver;
-  private readonly appRef: ApplicationRef;
-  private readonly injector: Injector;
+  private readonly settingsChangedSubject: Subject<Settings>;
 
-  private settingsComponentPortal: ComponentPortal<SettingsComponent>;
-  private settingsHost: DomPortalOutlet;
-
-  constructor(componentFactoryResolver: ComponentFactoryResolver, appRef: ApplicationRef, injector: Injector) {
-    this.componentFactoryResolver = componentFactoryResolver;
-    this.appRef = appRef;
-    this.injector = injector;
+  get settings$(): Observable<Settings> {
+    return this.settingsChangedSubject.asObservable();
   }
 
-  showSettings(): void {
-    const settingsWindow = window.open('') as Window;
-    (window as any).childwin = settingsWindow;
+  constructor() {
+    this.settingsChangedSubject = new ReplaySubject(1);
 
-    setTimeout(() => {
-      this.synchronizeStyleNodes(window.document.head, settingsWindow.document.head);
-
-      console.log(settingsWindow.document.head);
-      const settingsBody = settingsWindow.document.getElementsByTagName('body')[0];
-
-      (window as any).settingsBody = settingsBody;
-      (window as any).settingsWindow = settingsWindow;
-
-      this.settingsComponentPortal = new ComponentPortal(SettingsComponent);
-      this.settingsHost = new DomPortalOutlet(settingsBody, this.componentFactoryResolver, this.appRef, this.injector);
-      this.settingsHost.attach(this.settingsComponentPortal);
-    }, 1000);
-
-    //    this.settingsHost.detach();
+    const settings = this.getSettingsObject();
+    this.settingsChangedSubject.next(settings);
   }
 
-  private synchronizeStyleNodes(source: HTMLElement, target: HTMLElement) {
-    let insertedNodes: Node[] = [];
+  getClientId(): string | undefined {
+    return this.getSetting<string>('clientKey');
+  }
 
-    const observer = new MutationObserver((_records, _observer) => {
-      for (const node of insertedNodes) {
-        target.removeChild(node);
-      }
+  getClientSecret(): string | undefined {
+    return this.getSetting<string>('clientSecret');
+  }
 
-      insertedNodes = [];
+  getUsername(): string | undefined {
+    return this.getSetting<string>('username');
+  }
 
-      for (const node of Array.from(source.childNodes)) {
-        const istStyleNode = (node.nodeName == 'STYLE');
-        const isStyleSheetLink = (node.nodeName == 'LINK' && (node as HTMLLinkElement).rel == 'stylesheet');
+  getPassword(): string | undefined {
+    return this.getSetting<string>('password');
+  }
 
-        if (istStyleNode || isStyleSheetLink) {
-          const clone = node.cloneNode(true);
+  save(settings: { clientId?: string, clientSecret?: string, username?: string, password?: string }): void {
+    const { clientId, clientSecret, username, password } = settings;
 
-          if (isStyleSheetLink) {
-            (clone as HTMLLinkElement).href = (node as HTMLLinkElement).href;
-          }
+    if (clientId != undefined) {
+      this.setSetting('clientId', clientId);
+    }
 
-          target.appendChild(clone);
-          insertedNodes.push(clone);
-        }
-      }
-    });
+    if (clientSecret != undefined) {
+      this.setSetting('clientSecret', clientSecret);
+    }
 
-    observer.observe(source, { childList: true, attributes: true, characterData: true, subtree: true });
+    if (username != undefined) {
+      this.setSetting('username', username);
+    }
+
+    if (password != undefined) {
+      this.setSetting('password', password);
+    }
+
+    this.emitSettings();
+  }
+
+  private emitSettings(): void {
+    const settings = this.getSettingsObject();
+    this.settingsChangedSubject.next(settings);
+  }
+
+  private getSettingsObject(): Settings {
+    const username = this.getUsername();
+    const password = this.getPassword();
+    const clientId = this.getClientId();
+    const clientSecret = this.getClientSecret();
+
+    const settings: Settings = { username, password, clientId, clientSecret };
+    return settings;
+  }
+
+  private getSetting<T>(key: string): T | undefined;
+  private getSetting<T, U>(key: string, defaultValue: U): T | U;
+  private getSetting<T, U>(key: string, defaultValue?: U): T | U {
+    const serialized = localStorage.getItem(`settings:${key}`);
+
+    if (serialized == undefined) {
+      return defaultValue as U;
+    }
+
+    try {
+      const deserialized = JSON.parse(serialized) as T;
+      return deserialized;
+    }
+    catch (error) {
+      localStorage.removeItem(`settings:${key}`);
+      return defaultValue as U;
+    }
+  }
+
+  private setSetting<T>(key: string, value: T): void {
+    const serialized = JSON.stringify(value);
+    localStorage.setItem(`settings:${key}`, serialized);
   }
 }

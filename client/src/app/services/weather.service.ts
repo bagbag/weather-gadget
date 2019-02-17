@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
-import { Config, ConfigToken } from '../config';
+import { Injectable } from '@angular/core';
 import { WeatherData } from '../model';
 import { NetatmoWeatherStationData, NetatmoWeatherStationDataResponse, parseStationData } from '../netatmo';
+import { Subject, Observable, BehaviorSubject } from 'rxjs';
 
 type AuthResponse = {
   access_token: string;
@@ -13,7 +13,7 @@ type AuthResponse = {
 const NETATMO_AUTH_URL = 'https://api.netatmo.com/oauth2/token';
 const NETATMO_WEATHER_STATION_DATA_URL = 'https://api.netatmo.com/api/getstationsdata';
 
-const LoginRequestOptions = {
+const loginRequestOptions = {
   headers: new HttpHeaders({
     'Content-Type': 'application/x-www-form-urlencoded',
     'Authorization': 'my-auth-token'
@@ -25,26 +25,46 @@ const LoginRequestOptions = {
 })
 export class WeatherService {
   private readonly httpClient: HttpClient;
-  private readonly clientId: string;
-  private readonly clientSecret: string;
+  private readonly loggedInChangedSubject: BehaviorSubject<boolean>;
 
-  private accessToken: string;
-  private refreshToken: string;
-  private scope: string[];
+  private accessToken: string | undefined;
+  private refreshToken: string | undefined;
+  private scope: string[] | undefined;
 
-  constructor(httpClient: HttpClient, @Inject(ConfigToken) config: Config) {
-    this.httpClient = httpClient;
-    this.clientId = config.clientId;
-    this.clientSecret = config.clientSecret;
+  get loggedIn(): boolean {
+    return this.loggedInChangedSubject.value;
   }
 
-  async login(username: string, password: string): Promise<void> {
-    const params = this.getLoginParams(username, password).toString();
-    const response = await this.httpClient.post<AuthResponse>(NETATMO_AUTH_URL, params, LoginRequestOptions).toPromise();
+  get loggedIn$(): Observable<boolean> {
+    return this.loggedInChangedSubject.asObservable();
+  }
+
+  constructor(httpClient: HttpClient) {
+    this.httpClient = httpClient;
+
+    this.loggedInChangedSubject = new BehaviorSubject(false);
+    this.accessToken = undefined;
+    this.refreshToken = undefined;
+    this.scope = undefined;
+  }
+
+  async login(username: string, password: string, clientId: string, clientSecret: string): Promise<void> {
+    const params = this.getLoginParams(username, password, clientId, clientSecret).toString();
+    const response = await this.httpClient.post<AuthResponse>(NETATMO_AUTH_URL, params, loginRequestOptions).toPromise();
 
     this.accessToken = response.access_token;
     this.refreshToken = response.refresh_token;
     this.scope = response.scope;
+
+    this.loggedInChangedSubject.next(true);
+  }
+
+  logout(): void {
+    this.accessToken = undefined;
+    this.refreshToken = undefined;
+    this.scope = undefined;
+
+    this.loggedInChangedSubject.next(false);
   }
 
   async getWeatherData(): Promise<WeatherData[]> {
@@ -63,18 +83,22 @@ export class WeatherService {
     return response.body;
   }
 
-  private getLoginParams(username: string, password: string): URLSearchParams {
+  private getLoginParams(username: string, password: string, clientId: string, clientSecret: string): URLSearchParams {
     const params = new URLSearchParams();
     params.set('grant_type', 'password');
     params.set('username', username);
     params.set('password', password);
-    params.set('client_id', this.clientId);
-    params.set('client_secret', this.clientSecret);
+    params.set('client_id', clientId);
+    params.set('client_secret', clientSecret);
 
     return params;
   }
 
-  private getWeatherStationDataParams() {
+  private getWeatherStationDataParams(): { access_token: string } {
+    if (this.accessToken == undefined) {
+      throw new Error('not logged in');
+    }
+
     const params = {
       access_token: this.accessToken
     };

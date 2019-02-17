@@ -1,11 +1,12 @@
 
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { from, interval, Subscription } from 'rxjs';
-import { startWith, switchMap } from 'rxjs/operators';
-import { Config, ConfigToken } from './config';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { from, interval, merge, Subscription, combineLatest } from 'rxjs';
+import { filter, startWith, switchMap, withLatestFrom } from 'rxjs/operators';
+import { SettingsComponent } from './components/settings/settings.component';
 import { WeatherData } from './model';
-import { WeatherService } from './services/weather.service';
+import { ChildWindowService } from './services/child-window.service';
 import { SettingsService } from './services/settings.service';
+import { WeatherService } from './services/weather.service';
 
 @Component({
   selector: 'app-root',
@@ -14,24 +15,34 @@ import { SettingsService } from './services/settings.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   private readonly weatherService: WeatherService;
+  private readonly childWindowService: ChildWindowService;
   private readonly settingsService: SettingsService;
-  private readonly config: Config;
 
   private updateSubscription: Subscription;
 
   temperature: number;
 
-  constructor(weatherService: WeatherService, settingsService: SettingsService, @Inject(ConfigToken) config: Config) {
+  constructor(weatherService: WeatherService, childWindowService: ChildWindowService, settingsService: SettingsService) {
     this.weatherService = weatherService;
+    this.childWindowService = childWindowService;
     this.settingsService = settingsService;
-    this.config = config;
   }
 
   async ngOnInit(): Promise<void> {
-    await this.weatherService.login(this.config.username, this.config.password);
+    this.settingsService.settings$.subscribe(async ({ username, password, clientId, clientSecret }) => {
+      this.weatherService.logout();
 
-    this.updateSubscription = interval(10000).pipe(
-      startWith(-1),
+      if ((username == undefined) || (password == undefined) || (clientId == undefined) || (clientSecret == undefined)) {
+        return;
+      }
+
+      await this.weatherService.login(username, password, clientId, clientSecret);
+    });
+
+    const ticker = interval(10000).pipe(startWith(-1));
+
+    this.updateSubscription = combineLatest(this.weatherService.loggedIn$, ticker).pipe(
+      filter(([loggedIn]) => loggedIn),
       switchMap(() => from(this.weatherService.getWeatherData()))
     ).subscribe((weatherData) => this.onUpdate(weatherData));
   }
@@ -44,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.temperature = weatherData[0].modules[0].temperature as number;
   }
 
-  showSettings() {
-    this.settingsService.showSettings();
+  showSettings(): void {
+    const windowHandle = this.childWindowService.showComponent(SettingsComponent);
   }
 }
