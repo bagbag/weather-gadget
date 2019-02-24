@@ -1,8 +1,10 @@
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 import { ApplicationRef, ComponentFactoryResolver, Injectable, Injector, Type } from '@angular/core';
+import { timeout } from '../utils/timing';
 
-export type ChildWindowHandle = {
+export type ChildWindowHandle<T> = {
   nativeWindow: Window;
+  component: T,
   close: () => void;
 };
 
@@ -20,23 +22,25 @@ export class ChildWindowService {
     this.injector = injector;
   }
 
-  showComponent<T>(component: Type<T>): ChildWindowHandle {
+  async showComponent<T>(component: Type<T>): Promise<ChildWindowHandle<T>> {
     const childWindow = window.open('') as Window;
 
-    setTimeout(() => {
-      this.synchronizeStyleNodes(window, childWindow);
+    await timeout(250);
 
-      const childWindowBody = childWindow.document.getElementsByTagName('body')[0];
-      const componentPortal = new ComponentPortal(component);
-      const componentOutlet = new DomPortalOutlet(childWindowBody, this.componentFactoryResolver, this.appRef, this.injector);
+    const componentPortal = new ComponentPortal(component);
+    const childWindowBody = childWindow.document.getElementsByTagName('body')[0];
+    const componentOutlet = new DomPortalOutlet(childWindowBody, this.componentFactoryResolver, this.appRef, this.injector);
 
-      componentOutlet.attach(componentPortal);
-    }, 250);
+    this.synchronizeStyleNodes(window, childWindow);
+    const componentRef = componentOutlet.attach(componentPortal);
 
-    return {
+    const handle = {
       nativeWindow: childWindow,
+      component: componentRef.instance,
       close: () => childWindow.close()
     };
+
+    return handle;
   }
 
   private synchronizeStyleNodes(source: Window, target: Window): void {

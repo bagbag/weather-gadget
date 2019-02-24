@@ -17,3 +17,13 @@ export type WeatherModule = {
   pressure?: number;
   co2?: number;
 };
+
+export const moduleDataFields = [
+  'rain',
+  'noise',
+  'temperature',
+  'windSpeed',
+  'humidity',
+  'pressure',
+  'co2'
+];

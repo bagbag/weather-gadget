@@ -1,11 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, BehaviorSubject, ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
+
+export type ModuleField = {
+  stationId: string,
+  moduleId: string,
+  field: string
+};
 
 export type Settings = {
-  username: string | undefined;
-  password: string | undefined;
-  clientId: string | undefined;
-  clientSecret: string | undefined;
+  username: string | undefined,
+  password: string | undefined,
+  clientId: string | undefined,
+  clientSecret: string | undefined,
+  enabledModuleFields: ModuleField[]
 };
 
 @Injectable({
@@ -41,8 +48,12 @@ export class SettingsService {
     return this.getSetting<string>('password');
   }
 
-  save(settings: { clientId?: string, clientSecret?: string, username?: string, password?: string }): void {
-    const { clientId, clientSecret, username, password } = settings;
+  getEnabledModuleFields(): ModuleField[] {
+    return this.getSetting<ModuleField[]>('enabledModuleFields', []);
+  }
+
+  save(settings: { clientId?: string, clientSecret?: string, username?: string, password?: string, enabledModuleFields?: ModuleField[] }): void {
+    const { clientId, clientSecret, username, password, enabledModuleFields } = settings;
 
     if (clientId != undefined) {
       this.setSetting('clientId', clientId);
@@ -60,6 +71,10 @@ export class SettingsService {
       this.setSetting('password', password);
     }
 
+    if (enabledModuleFields != undefined) {
+      this.setSetting('enabledModuleFields', enabledModuleFields);
+    }
+
     this.emitSettings();
   }
 
@@ -73,12 +88,14 @@ export class SettingsService {
     const password = this.getPassword();
     const clientId = this.getClientId();
     const clientSecret = this.getClientSecret();
+    const enabledModuleFields = this.getEnabledModuleFields();
 
-    const settings: Settings = { username, password, clientId, clientSecret };
+    const settings: Settings = { username, password, clientId, clientSecret, enabledModuleFields };
     return settings;
   }
 
   private getSetting<T>(key: string): T | undefined;
+  private getSetting<T>(key: string, defaultValue: T): T;
   private getSetting<T, U>(key: string, defaultValue: U): T | U;
   private getSetting<T, U>(key: string, defaultValue?: U): T | U {
     const serialized = localStorage.getItem(`settings:${key}`);

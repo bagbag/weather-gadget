@@ -1,0 +1,14 @@
+<div *ngFor="let station of weatherData" class="node">
+  {{ station.stationName }}
+
+  <div *ngFor="let module of station.modules" class="node">
+    {{ module.moduleName }}
+
+    <div *ngFor="let field of (module | moduleFields)" class="node">
+      <mat-checkbox color="primary" [checked]="isModuleFieldEnabled(station.stationId, module.moduleId, field.name) | async"
+        (change)="setModuleFieldEnabled(station.stationId, module.moduleId, field.name, $event.checked)">
+        {{ field.name }}
+      </mat-checkbox>
+    </div>
+  </div>
+</div>
