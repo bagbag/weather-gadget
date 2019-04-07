@@ -1,28 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SettingsService } from 'src/app/services/settings.service';
-import { moduleDataFields, WeatherData } from '../../model';
 import { map } from 'rxjs/operators';
+import { SettingsService } from 'src/app/services/settings.service';
+import { moduleDataFields, WeatherStation } from '../../model';
 
 @Component({
   selector: 'app-data-selector',
   templateUrl: './data-selector.component.html',
-  styleUrls: ['./data-selector.component.scss']
+  styleUrls: ['./data-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DataSelectorComponent implements OnInit {
+export class DataSelectorComponent {
   private readonly settingsService: SettingsService;
+  private readonly changeDetectorRef: ChangeDetectorRef;
 
-  weatherData: WeatherData[];
+  weatherStation: WeatherStation[];
   dataFields: string[];
 
-  constructor(settingsService: SettingsService) {
+  constructor(settingsService: SettingsService, changeDetectorRef: ChangeDetectorRef) {
     this.settingsService = settingsService;
+    this.changeDetectorRef = changeDetectorRef;
 
-    this.weatherData = [];
+    this.weatherStation = [];
     this.dataFields = moduleDataFields;
   }
 
-  ngOnInit() {
+  setweatherStation(weatherStation: WeatherStation[]): void {
+    this.weatherStation = weatherStation;
+    this.changeDetectorRef.markForCheck();
   }
 
   isModuleFieldEnabled(stationId: string, moduleId: string, field: string): Observable<boolean> {
@@ -49,5 +54,9 @@ export class DataSelectorComponent implements OnInit {
         (moduleField.field != field));
 
     this.settingsService.save({ enabledModuleFields: newEnabledModuleFields });
+  }
+
+  reset(): void {
+    this.settingsService.save({ enabledModuleFields: [] });
   }
 }

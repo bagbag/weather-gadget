@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { WeatherData } from '../model';
+import { WeatherStation } from '../model';
 import { NetatmoWeatherStationData, NetatmoWeatherStationDataResponse, parseStationData } from '../netatmo';
 import { Subject, Observable, BehaviorSubject } from 'rxjs';
 
@@ -67,16 +67,16 @@ export class WeatherService {
     this.loggedInChangedSubject.next(false);
   }
 
-  async getWeatherData(): Promise<WeatherData[]> {
+  async getWeatherStations(): Promise<WeatherStation[]> {
     const now = Math.floor(Date.now() / 1000);
 
-    const stationData = await this.getWeatherStationData();
-    const weatherDatas = parseStationData(stationData, now);
+    const stationData = await this.getWeatherStationsData();
+    const weatherStations = parseStationData(stationData, now);
 
-    return weatherDatas;
+    return weatherStations;
   }
 
-  private async getWeatherStationData(): Promise<NetatmoWeatherStationData> {
+  private async getWeatherStationsData(): Promise<NetatmoWeatherStationData> {
     const params = this.getWeatherStationDataParams();
     const response = await this.httpClient.post<NetatmoWeatherStationDataResponse>(NETATMO_WEATHER_STATION_DATA_URL, params).toPromise();
 

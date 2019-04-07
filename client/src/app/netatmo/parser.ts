@@ -1,19 +1,19 @@
-import { WeatherData, WeatherModule } from '../model/weather-data';
+import { WeatherStation, WeatherModule } from '../model/weather-data';
 import { Device, Module, NetatmoWeatherStationData } from './types';
 
-export function parseStationData(data: NetatmoWeatherStationData, timestamp: number): WeatherData[] {
-  const weatherDatas: WeatherData[] = [];
+export function parseStationData(data: NetatmoWeatherStationData, timestamp: number): WeatherStation[] {
+  const weatherStations: WeatherStation[] = [];
 
   for (const device of data.devices) {
-    const weatherData = parseDevice(device, timestamp);
-    weatherDatas.push(weatherData);
+    const weatherStation = parseDevice(device, timestamp);
+    weatherStations.push(weatherStation);
   }
 
-  return weatherDatas;
+  return weatherStations;
 }
 
-function parseDevice(device: Device, timestamp: number): WeatherData {
-  const weatherData: WeatherData = {
+function parseDevice(device: Device, timestamp: number): WeatherStation {
+  const weatherStation: WeatherStation = {
     timestamp,
     stationId: device._id,
     stationName: device.station_name,
@@ -25,10 +25,10 @@ function parseDevice(device: Device, timestamp: number): WeatherData {
 
   for (const netatmoModule of modules) {
     const parsedModule = parseModule(netatmoModule);
-    weatherData.modules.push(parsedModule);
+    weatherStation.modules.push(parsedModule);
   }
 
-  return weatherData;
+  return weatherStation;
 }
 
 function deviceToModule(device: Device, timestamp: number): Module {
@@ -52,6 +52,10 @@ function parseModule(netatmoModule: Module): WeatherModule {
   };
 
   const data = netatmoModule.dashboard_data;
+
+  if (data == undefined) {
+    return weatherModule;
+  }
 
   if (data.Humidity != undefined) {
     weatherModule.humidity = data.Humidity;

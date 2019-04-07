@@ -1,4 +1,4 @@
-export type WeatherData = {
+export type WeatherStation = {
   timestamp: number;
   stationId: string;
   stationName?: string;
@@ -27,3 +27,5 @@ export const moduleDataFields = [
   'pressure',
   'co2'
 ];
+
+export const moduleDataFieldsSet = new Set(moduleDataFields);

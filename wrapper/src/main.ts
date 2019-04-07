@@ -4,8 +4,8 @@ import * as Path from 'path';
 
 function createWindow() {
   const window = new BrowserWindow({
-    width: 60,
-    height: 80,
+    width: 90,
+    height: 130,
     titleBarStyle: 'hidden',
     autoHideMenuBar: true,
     webPreferences: {

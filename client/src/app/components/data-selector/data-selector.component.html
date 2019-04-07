@@ -1,4 +1,4 @@
-<div *ngFor="let station of weatherData" class="node">
+<div *ngFor="let station of weatherStation" class="node">
   {{ station.stationName }}
 
   <div *ngFor="let module of station.modules" class="node">
@@ -12,3 +12,5 @@
     </div>
   </div>
 </div>
+
+<button matButton (click)="reset()">Reset</button>

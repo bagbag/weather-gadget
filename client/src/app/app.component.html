@@ -1,4 +1,14 @@
-{{ temperature }}
+<div *ngFor="let station of (data$ | async).stations">
+  {{ station.name }}
+
+  <div *ngFor="let module of station.modules">
+    {{ module.name }}
+
+    <div *ngFor="let field of module.fields">
+      {{ field.name }}: {{ field.value }}
+    </div>
+  </div>
+</div>
 
 <button mat-button (click)="showSettings()">Settings</button>
 <button mat-button (click)="showDataSelector()">Data</button>
